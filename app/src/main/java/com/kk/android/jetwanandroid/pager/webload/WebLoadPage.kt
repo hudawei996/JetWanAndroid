@@ -112,8 +112,8 @@ fun WebLoadPage(navController: NavController, url: String?) {
                     modifier = Modifier.clip(CircleShape).background(Color.Transparent)
                 ) {
                     Box(contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator(modifier = Modifier.size(70.dp))
-                        Text(stringResource(R.string.on_loading), fontSize = 12.sp, color = MaterialTheme.colors.primary)
+                        CircularProgressIndicator(modifier = Modifier.size(60.dp))
+                        Text(stringResource(R.string.on_loading), fontSize = 10.sp, color = MaterialTheme.colors.primary)
                     }
                 }
             }
