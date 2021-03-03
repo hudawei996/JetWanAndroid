@@ -8,4 +8,8 @@ import androidx.paging.PagingConfig
  */
 private const val PAGING_PAGER_SIZE = 20
 
-val constPagerConfig = PagingConfig(PAGING_PAGER_SIZE)
+val constPagerConfig = PagingConfig(
+    pageSize = PAGING_PAGER_SIZE,
+    prefetchDistance = PAGING_PAGER_SIZE / 2,
+    initialLoadSize = PAGING_PAGER_SIZE
+)

@@ -14,7 +14,8 @@ import com.kk.android.jetwanandroid.utils.constPagerConfig
 class HomeViewModel(
     private val repository: HomeRepository
 ) : ViewModel() {
-    fun getHomeArticles() = Pager(constPagerConfig) {
+
+    val homeArticles = Pager(constPagerConfig) {
         HomePagingDataSource(repository)
     }.flow.cachedIn(viewModelScope)
 }
