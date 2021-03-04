@@ -25,7 +25,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.kk.android.jetwanandroid.R
-import com.kk.android.jetwanandroid.commonui.SwipeToRefreshLayout
+import com.kk.android.jetwanandroid.commonui.*
 import com.kk.android.jetwanandroid.data.HomeArticleDetail
 import com.kk.android.jetwanandroid.nav.NavActions
 import com.kk.android.jetwanandroid.network.createService
@@ -48,16 +48,31 @@ fun HomePage(navController: NavController) {
     }
 
     SwipeToRefreshLayout(refreshState, onRefresh = { lazyPagingItems.refresh() }) {
-        LazyColumn {
-            items(lazyPagingItems = lazyPagingItems) { article ->
-                if (article != null) {
-                    ArticleView(navController, article)
+        lazyPagingItems.apply {
+            if (loadState.refresh is LoadState.Error) { // when load first page errors occur load an retry image
+                LoadErrorView { refresh() }
+            } else if (loadState.refresh is LoadState.NotLoading && itemCount == 0) { // when there is no data load an empty image
+                LoadEmptyView()
+            } else {
+                LazyColumn {
+                    items(lazyPagingItems = lazyPagingItems) { article ->
+                        if (article != null) {
+                            ArticleView(navController, article)
+                        }
+                    }
+
+                    if (loadState.append is LoadState.Error) { // when load more errors occur
+                        item { OnLoadingMoreErrorView { retry() } }
+                    } else if (loadState.append is LoadState.Loading) { // when load more is loading state
+                        item { OnLoadingMoreView() }
+                    }
                 }
             }
         }
     }
 }
 
+// View to load Article Information
 @Composable
 fun ArticleView(navController: NavController, article: HomeArticleDetail) {
     Card(
