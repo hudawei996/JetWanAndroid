@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -36,12 +38,13 @@ import com.kk.android.jetwanandroid.utils.renderHtml
  * @description
  */
 @Composable
-fun HomePage(navController: NavController) {
+fun HomePage(navController: NavController, lazyListController: (LazyListState) -> Unit = {}) {
     val viewModel: HomeViewModel = viewModel(
         factory = HomeViewModelFactory(HomeRepository(createService()))
     )
 
     var refreshState by remember { mutableStateOf(false) }
+    val lazyListState = rememberLazyListState().apply { lazyListController(this) }
 
     val lazyPagingItems = viewModel.homeArticles.collectAsLazyPagingItems().apply {
         refreshState = (loadState.refresh is LoadState.Loading)
@@ -54,7 +57,7 @@ fun HomePage(navController: NavController) {
             } else if (loadState.refresh is LoadState.NotLoading && itemCount == 0) { // when there is no data load an empty image
                 LoadEmptyView()
             } else {
-                LazyColumn {
+                LazyColumn(state = lazyListState) {
                     items(lazyPagingItems = lazyPagingItems) { article ->
                         if (article != null) {
                             ArticleView(navController, article)

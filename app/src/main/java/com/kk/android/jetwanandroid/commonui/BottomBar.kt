@@ -2,7 +2,9 @@ package com.kk.android.jetwanandroid.commonui
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -32,7 +34,7 @@ fun HomeBottomItem(
         Icon(
             painter = painterResource(drawable),
             contentDescription = null,
-            modifier = Modifier.size(30.dp),
+            modifier = Modifier.size(30.dp).padding(4.dp),
             tint = color
         )
 
@@ -41,15 +43,4 @@ fun HomeBottomItem(
             fontSize = 12.sp, color = color
         )
     }
-}
-
-@Composable
-fun HomeBottomBar(
-    modifier: Modifier = Modifier,
-    content: @Composable RowScope.() -> Unit
-) {
-    Row(
-        modifier.fillMaxWidth(),
-        content = content
-    )
 }

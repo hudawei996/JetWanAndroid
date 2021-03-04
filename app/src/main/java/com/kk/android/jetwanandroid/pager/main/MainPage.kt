@@ -2,10 +2,9 @@ package com.kk.android.jetwanandroid.pager.main
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -13,12 +12,12 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.kk.android.jetwanandroid.R
-import com.kk.android.jetwanandroid.commonui.HomeBottomBar
 import com.kk.android.jetwanandroid.commonui.HomeBottomItem
 import com.kk.android.jetwanandroid.commonui.Pager
 import com.kk.android.jetwanandroid.commonui.PagerState
@@ -36,6 +35,7 @@ import kotlinx.coroutines.launch
 fun MainPage(navController: NavController) {
     val coroutineScope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
+    var mLazyListState: LazyListState? = null
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -57,6 +57,13 @@ fun MainPage(navController: NavController) {
                         content = {
                             Icon(Icons.Default.Menu, contentDescription = null)
                         })
+                },
+                modifier = Modifier.pointerInput(Unit) {
+                    detectTapGestures(onDoubleTap = {
+                        coroutineScope.launch {
+                            mLazyListState?.scrollToItem(0)
+                        }
+                    })
                 })
         },
         drawerContent = { HomeDrawer() }
@@ -66,7 +73,7 @@ fun MainPage(navController: NavController) {
         Column(modifier = Modifier.fillMaxSize()) {
             Pager(pagerState, Modifier.weight(1f)) {
                 when (page) {
-                    0 -> HomePage(navController)
+                    0 -> HomePage(navController) { mLazyListState = it }
                     1 -> ProjectPage()
                     2 -> SystemPage()
                     3 -> SharePage()
@@ -87,12 +94,12 @@ fun MainPage(navController: NavController) {
 
 @Composable
 fun HomeNavBar(current: Int, onSelectedPositionChange: (Int) -> Unit) {
-    HomeBottomBar {
+    Row(modifier = Modifier.fillMaxWidth()) {
         HomeBottomItem(
             modifier = Modifier.weight(1f)
                 .clickable { onSelectedPositionChange(0) },
             title = R.string.home,
-            drawable = R.drawable.ic_launcher_round,
+            drawable = R.drawable.ic_nav_home,
             color = if (current == 0) MaterialTheme.colors.primary else Color.Black
         )
 
@@ -100,7 +107,7 @@ fun HomeNavBar(current: Int, onSelectedPositionChange: (Int) -> Unit) {
             modifier = Modifier.weight(1f)
                 .clickable { onSelectedPositionChange(1) },
             title = R.string.projects,
-            drawable = R.drawable.ic_launcher_round,
+            drawable = R.drawable.ic_nav_project,
             color = if (current == 1) MaterialTheme.colors.primary else Color.Black
         )
 
@@ -108,7 +115,7 @@ fun HomeNavBar(current: Int, onSelectedPositionChange: (Int) -> Unit) {
             modifier = Modifier.weight(1f)
                 .clickable { onSelectedPositionChange(2) },
             title = R.string.system,
-            drawable = R.drawable.ic_launcher_round,
+            drawable = R.drawable.ic_nav_system,
             color = if (current == 2) MaterialTheme.colors.primary else Color.Black
         )
 
@@ -116,7 +123,7 @@ fun HomeNavBar(current: Int, onSelectedPositionChange: (Int) -> Unit) {
             modifier = Modifier.weight(1f)
                 .clickable { onSelectedPositionChange(3) },
             title = R.string.share,
-            drawable = R.drawable.ic_launcher_round,
+            drawable = R.drawable.ic_nav_share,
             color = if (current == 3) MaterialTheme.colors.primary else Color.Black
         )
     }
