@@ -44,7 +44,7 @@ fun HomePage(navController: NavController, lazyListController: (LazyListState) -
     )
 
     var refreshState by remember { mutableStateOf(false) }
-    val lazyListState = rememberLazyListState().apply { lazyListController(this) }
+    val lazyListState = rememberLazyListState().apply(lazyListController)
 
     val lazyPagingItems = viewModel.homeArticles.collectAsLazyPagingItems().apply {
         refreshState = (loadState.refresh is LoadState.Loading)
@@ -64,10 +64,18 @@ fun HomePage(navController: NavController, lazyListController: (LazyListState) -
                         }
                     }
 
-                    if (loadState.append is LoadState.Error) { // when load more errors occur
-                        item { OnLoadingMoreErrorView { retry() } }
-                    } else if (loadState.append is LoadState.Loading) { // when load more is loading state
-                        item { OnLoadingMoreView() }
+                    when (loadState.append) {
+                        // when load more errors occur
+                        is LoadState.Error -> item { OnLoadingMoreErrorView { retry() } }
+
+                        // when load more is loading state
+                        is LoadState.Loading -> item { OnLoadingMoreView() }
+
+                        // when load more no more data
+                        is LoadState.NotLoading ->
+                            if (loadState.refresh !is LoadState.Loading) {
+                                item { NoMoreDataView() }
+                            }
                     }
                 }
             }

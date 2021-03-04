@@ -74,7 +74,7 @@ fun MainPage(navController: NavController) {
             Pager(pagerState, Modifier.weight(1f)) {
                 when (page) {
                     0 -> HomePage(navController) { mLazyListState = it }
-                    1 -> ProjectPage()
+                    1 -> ProjectPage(navController){mLazyListState = it}
                     2 -> SystemPage()
                     3 -> SharePage()
                 }

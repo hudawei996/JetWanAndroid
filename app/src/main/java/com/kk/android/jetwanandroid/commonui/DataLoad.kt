@@ -45,6 +45,19 @@ fun LoadEmptyView(modifier: Modifier = Modifier) {
 }
 
 @Composable
+fun NoMoreDataView(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier.fillMaxWidth().height(50.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            stringResource(R.string.no_more_data),
+            modifier = Modifier.align(Alignment.Center)
+        )
+    }
+}
+
+@Composable
 fun OnLoadingMoreView(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier.fillMaxWidth().height(50.dp),

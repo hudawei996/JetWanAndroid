@@ -67,7 +67,7 @@ interface ApiService {
 
     // 项目分类
     @GET("/project/tree/json")
-    suspend fun projectCategory(): BaseResultData<MutableList<ProjectCategoryData>>
+    suspend fun projectCategory(): BaseResultData<MutableList<ProjectCategoryData>?>
 
     /**
      * 返回项目分类下的所有项目列表，cid 查看 [ProjectCategoryData] #id
@@ -75,7 +75,7 @@ interface ApiService {
     @GET("/project/list/{page}/json")
     suspend fun projectList(
         @Path("page") page: Int, @Query("cid") cid: Int, @Header("Cookie") cookie: String
-    ): BaseResultData<ProjectDetailResult>
+    ): BaseResultData<ProjectDetailResult?>
 
     // 广场分享文章列表
     @GET("/user_article/list/{page}/json")

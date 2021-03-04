@@ -7,5 +7,6 @@
     <string name="share">分享</string>
     <string name="art_detail">内容详情</string>
     <string name="on_loading">正在加载..</string>
+    <string name="no_more_data">数据已加载完毕</string>
     <string name="retry">加载出错, 点击重新加载</string>
 </resources>
