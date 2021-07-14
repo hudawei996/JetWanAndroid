@@ -87,20 +87,25 @@ fun HomePage(navController: NavController, lazyListController: (LazyListState) -
 @Composable
 fun ArticleView(navController: NavController, article: HomeArticleDetail) {
     Card(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .padding(horizontal = 12.dp, vertical = 6.dp)
             .clickable { NavActions(navController).loadWebInfo(article.link) },
         shape = MaterialTheme.shapes.large, elevation = 4.dp
     ) {
         ConstraintLayout(
-            modifier = Modifier.fillMaxWidth().padding(8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
         ) {
             val (arcTitle, arcChapter, arcTime, hotLabel, freshLabel) = createRefs()
 
             Text(
                 article.title.renderHtml(), color = Color.Black, fontSize = 16.sp, maxLines = 2,
                 fontWeight = FontWeight.Bold, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Start,
-                modifier = Modifier.fillMaxWidth().constrainAs(arcTitle) { top.linkTo(parent.top) }
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .constrainAs(arcTitle) { top.linkTo(parent.top) }
             )
 
             Text(
@@ -123,10 +128,12 @@ fun ArticleView(navController: NavController, article: HomeArticleDetail) {
                 Image(
                     painter = painterResource(R.drawable.ic_hot),
                     contentDescription = null,
-                    modifier = Modifier.constrainAs(hotLabel) {
-                        bottom.linkTo(arcTime.bottom)
-                        start.linkTo(parent.start)
-                    }.size(20.dp)
+                    modifier = Modifier
+                        .constrainAs(hotLabel) {
+                            bottom.linkTo(arcTime.bottom)
+                            start.linkTo(parent.start)
+                        }
+                        .size(20.dp)
                 )
             }
 
@@ -134,10 +141,13 @@ fun ArticleView(navController: NavController, article: HomeArticleDetail) {
                 Image(
                     painter = painterResource(R.drawable.ic_fresh),
                     contentDescription = null,
-                    modifier = Modifier.constrainAs(freshLabel) {
-                        bottom.linkTo(arcTime.bottom)
-                        start.linkTo(hotLabel.end)
-                    }.padding(start = 4.dp).size(20.dp)
+                    modifier = Modifier
+                        .constrainAs(freshLabel) {
+                            bottom.linkTo(arcTime.bottom)
+                            start.linkTo(hotLabel.end)
+                        }
+                        .padding(start = 4.dp)
+                        .size(20.dp)
                 )
             }
         }

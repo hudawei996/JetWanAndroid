@@ -1,7 +1,6 @@
 package com.kk.android.jetwanandroid.nav
 
 import androidx.navigation.NavController
-import androidx.navigation.compose.navigate
 
 /**
  * @author kuky.

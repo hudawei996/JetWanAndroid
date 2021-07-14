@@ -1,5 +1,6 @@
 package com.kk.android.jetwanandroid.pager.project
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -25,13 +26,17 @@ import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
+import coil.transform.CircleCropTransformation
+import com.google.accompanist.coil.rememberCoilPainter
+import com.google.accompanist.imageloading.ImageLoadState
 import com.kk.android.jetwanandroid.commonui.*
 import com.kk.android.jetwanandroid.nav.NavActions
 import com.kk.android.jetwanandroid.network.createService
 import com.kk.android.jetwanandroid.utils.renderHtml
 import com.kuky.demo.wan.android.entity.ProjectCategoryData
 import com.kuky.demo.wan.android.entity.ProjectDetailData
-import dev.chrisbanes.accompanist.coil.CoilImage
+
+//import dev.chrisbanes.accompanist.coil.CoilImage
 
 /**
  * @author kuky.
@@ -114,13 +119,22 @@ fun ProjectPage(navController: NavController, lazyListController: (LazyListState
 @Composable
 fun CategoryView(navController: NavController, project: ProjectDetailData) {
     Card(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .padding(horizontal = 12.dp, vertical = 6.dp)
             .clickable { NavActions(navController).loadWebInfo(project.link) },
         shape = MaterialTheme.shapes.large, elevation = 4.dp
     ) {
-        Column(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
-            Row(modifier = Modifier.fillMaxSize().padding(end = 12.dp)) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(end = 12.dp)
+            ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         project.title.renderHtml(), color = Color.Black, fontSize = 16.sp, maxLines = 2,
@@ -130,20 +144,32 @@ fun CategoryView(navController: NavController, project: ProjectDetailData) {
 
                     Text(
                         project.desc.renderHtml(), fontSize = 14.sp, maxLines = 3, overflow = TextOverflow.Ellipsis,
-                        textAlign = TextAlign.Start, modifier = Modifier.fillMaxWidth().padding(top = 20.dp)
+                        textAlign = TextAlign.Start, modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 20.dp)
                     )
                 }
 
-                CoilImage(
-                    data = project.envelopePic, contentDescription = null, fadeIn = true,
-                    loading = { ImagePlaceHolder() }, error = { ImagePlaceHolder() },
-                    modifier = Modifier.width(60.dp).heightIn(60.dp, 100.dp)
-                )
+                val painter = rememberCoilPainter(request = project.envelopePic, fadeIn = true)
+                Box(
+                    modifier = Modifier
+                        .width(60.dp)
+                        .heightIn(60.dp, 100.dp)
+                ) {
+                    Image(painter = painter, contentDescription = null)
+
+                    when (painter.loadState) {
+                        is ImageLoadState.Loading, is ImageLoadState.Error -> ImagePlaceHolder()
+                    }
+                }
             }
 
             Text(
                 "${project.author}\t\t${project.niceDate}", fontSize = 14.sp, maxLines = 1,
-                modifier = Modifier.align(Alignment.End).padding(top = 4.dp).clip(MaterialTheme.shapes.large)
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .padding(top = 4.dp)
+                    .clip(MaterialTheme.shapes.large)
             )
         }
     }
@@ -152,7 +178,11 @@ fun CategoryView(navController: NavController, project: ProjectDetailData) {
 @Composable
 fun ImagePlaceHolder() {
     Box(
-        Modifier.width(60.dp).height(100.dp).background(Color.Gray).clip(MaterialTheme.shapes.large)
+        Modifier
+            .width(60.dp)
+            .height(100.dp)
+            .background(Color.Gray)
+            .clip(MaterialTheme.shapes.large)
     )
 }
 
@@ -166,7 +196,8 @@ fun CategoryLabel(
         .background(
             if (isSelected) MaterialTheme.colors.primary else Color.White,
             shape = RoundedCornerShape(4.dp)
-        ).padding(horizontal = 8.dp, vertical = 4.dp)
+        )
+        .padding(horizontal = 8.dp, vertical = 4.dp)
 
     val clickModifier = normalModifier.clickable { onSelectedClick() }
 
@@ -182,39 +213,59 @@ fun CategoryLabel(
 @Composable
 fun CategoryViewByConstraint(navController: NavController, project: ProjectDetailData) {
     Card(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .padding(horizontal = 12.dp, vertical = 6.dp)
             .clickable { NavActions(navController).loadWebInfo(project.link) },
         shape = MaterialTheme.shapes.large, elevation = 4.dp
     ) {
         ConstraintLayout(
-            modifier = Modifier.fillMaxWidth().padding(8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
         ) {
             val (proTitle, proDesc, proImg, proAuthor) = createRefs()
 
-            CoilImage(data = project.envelopePic, contentDescription = null, fadeIn = true,
-                modifier = Modifier.size(60.dp).constrainAs(proImg) {
-                    end.linkTo(parent.end)
-                    top.linkTo(parent.top)
-                })
+            Image(
+                painter = rememberCoilPainter(request = project.envelopePic, fadeIn = true,
+                    requestBuilder = { transformations(CircleCropTransformation()) }),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(60.dp)
+                    .constrainAs(proImg) {
+                        end.linkTo(parent.end)
+                        top.linkTo(parent.top)
+                    }
+            )
+
+//            CoilImage(data = project.envelopePic, contentDescription = null, fadeIn = true,
+//                modifier = Modifier.size(60.dp).constrainAs(proImg) {
+//                    end.linkTo(parent.end)
+//                    top.linkTo(parent.top)
+//                })
 
             Text(
                 project.title.renderHtml(), color = Color.Black, fontSize = 16.sp, maxLines = 2,
                 fontWeight = FontWeight.Bold, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Start,
-                modifier = Modifier.constrainAs(proTitle) {
-                    top.linkTo(parent.top)
-                    start.linkTo(parent.start)
-                    end.linkTo(proImg.start, margin = 4.dp)
-                }.background(Color.Red).wrapContentWidth()
+                modifier = Modifier
+                    .constrainAs(proTitle) {
+                        top.linkTo(parent.top)
+                        start.linkTo(parent.start)
+                        end.linkTo(proImg.start, margin = 4.dp)
+                    }
+                    .background(Color.Red)
+                    .wrapContentWidth()
             )
 
             Text(
                 project.desc.renderHtml(), fontSize = 14.sp, maxLines = 2, overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Start, modifier = Modifier.constrainAs(proDesc) {
-                    start.linkTo(proTitle.start)
-                    top.linkTo(proTitle.bottom, margin = 16.dp)
-                    end.linkTo(proTitle.end)
-                }.wrapContentWidth()
+                textAlign = TextAlign.Start, modifier = Modifier
+                    .constrainAs(proDesc) {
+                        start.linkTo(proTitle.start)
+                        top.linkTo(proTitle.bottom, margin = 16.dp)
+                        end.linkTo(proTitle.end)
+                    }
+                    .wrapContentWidth()
             )
 
             Text("${project.author}\t\t${project.niceDate}", fontSize = 14.sp, maxLines = 1,

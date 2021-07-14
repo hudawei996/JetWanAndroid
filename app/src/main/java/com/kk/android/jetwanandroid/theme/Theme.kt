@@ -1,5 +1,6 @@
 package com.kk.android.jetwanandroid.theme
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
@@ -21,6 +22,7 @@ private val LightThemeColors = lightColors(
     error = Red800
 )
 
+@SuppressLint("ConflictingOnColor")
 private val DarkThemeColors = darkColors(
     primary = Red300,
     primaryVariant = Red700,

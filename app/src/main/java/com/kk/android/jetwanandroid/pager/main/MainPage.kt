@@ -4,7 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -36,10 +38,13 @@ fun MainPage(navController: NavController) {
     val coroutineScope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
     var mLazyListState: LazyListState? = null
+    val pagerState by remember { mutableStateOf(PagerState(maxPage = 3)) }
 
     Scaffold(
         scaffoldState = scaffoldState,
-        modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(),
         drawerShape = RoundedCornerShape(topEnd = 8.dp, bottomEnd = 8.dp),
         topBar = {
             TopAppBar(elevation = 1.dp,
@@ -68,13 +73,11 @@ fun MainPage(navController: NavController) {
         },
         drawerContent = { HomeDrawer() }
     ) {
-        val pagerState by remember { mutableStateOf(PagerState(maxPage = 3)) }
-
         Column(modifier = Modifier.fillMaxSize()) {
             Pager(pagerState, Modifier.weight(1f)) {
                 when (page) {
                     0 -> HomePage(navController) { mLazyListState = it }
-                    1 -> ProjectPage(navController){mLazyListState = it}
+                    1 -> ProjectPage(navController) { mLazyListState = it }
                     2 -> SystemPage()
                     3 -> SharePage()
                 }
@@ -96,7 +99,8 @@ fun MainPage(navController: NavController) {
 fun HomeNavBar(current: Int, onSelectedPositionChange: (Int) -> Unit) {
     Row(modifier = Modifier.fillMaxWidth()) {
         HomeBottomItem(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .weight(1f)
                 .clickable { onSelectedPositionChange(0) },
             title = R.string.home,
             drawable = R.drawable.ic_nav_home,
@@ -104,7 +108,8 @@ fun HomeNavBar(current: Int, onSelectedPositionChange: (Int) -> Unit) {
         )
 
         HomeBottomItem(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .weight(1f)
                 .clickable { onSelectedPositionChange(1) },
             title = R.string.projects,
             drawable = R.drawable.ic_nav_project,
@@ -112,7 +117,8 @@ fun HomeNavBar(current: Int, onSelectedPositionChange: (Int) -> Unit) {
         )
 
         HomeBottomItem(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .weight(1f)
                 .clickable { onSelectedPositionChange(2) },
             title = R.string.system,
             drawable = R.drawable.ic_nav_system,
@@ -120,7 +126,8 @@ fun HomeNavBar(current: Int, onSelectedPositionChange: (Int) -> Unit) {
         )
 
         HomeBottomItem(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .weight(1f)
                 .clickable { onSelectedPositionChange(3) },
             title = R.string.share,
             drawable = R.drawable.ic_nav_share,
@@ -131,8 +138,34 @@ fun HomeNavBar(current: Int, onSelectedPositionChange: (Int) -> Unit) {
 
 @Composable
 fun HomeDrawer() {
-    Column(modifier = Modifier.fillMaxSize().background(Color.White)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
 
     }
 }
 
+@Composable
+fun TodoList(
+    highPriorityKeywords: List<String> = listOf("Review", "Unblock", "Compose")
+) {
+    val todoTasks = remember { mutableStateListOf<String>() }
+
+    // Calculate high priority tasks only when the todoTasks or
+    // highPriorityKeywords change, not on every recomposition
+    val highPriorityTasks by remember(todoTasks, highPriorityKeywords) {
+        derivedStateOf {
+            todoTasks.filter { highPriorityKeywords.contains(it) }
+        }
+    }
+
+    Box(Modifier.fillMaxSize()) {
+        LazyColumn {
+            items(highPriorityTasks) {}
+            items(todoTasks) {}
+        }
+        /* Rest of the UI where users can add elements to the list */
+    }
+}
